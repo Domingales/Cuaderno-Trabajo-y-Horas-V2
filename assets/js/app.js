@@ -576,49 +576,51 @@ function filterByPeriod(arr, start, end){
     return { row, name, qty, add, del };
   }
 
-  
   function makeTrabajoRow(kind, data){
-    const row = UI.el("div",{class:"form-row-inline", style:"width:100%;align-items:stretch"});
+    const wrap = UI.el("div",{style:"width:100%"});
+
     const ta = UI.el("textarea",{
       class:"textarea",
       rows:"2",
       placeholder: kind==="pend" ? "Ej: Revisar poleas, revisar motor…" : "Ej: Cambio de correa, engrase…",
-      style:"flex:1;min-width:0"
+      style:"width:100%;box-sizing:border-box"
     }, String(data||""));
 
-    const add = UI.el("button",{type:"button", class:"btn btnSmall", style:"min-width:44px"}, "＋");
-    const del = UI.el("button",{type:"button", class:"btn btnSmall btnDanger", style:"min-width:44px"}, "－");
+    const add = UI.el("button",{type:"button", class:"btn btnSmall", style:"min-width:64px"}, "＋");
+    const del = UI.el("button",{type:"button", class:"btn btnSmall btnDanger", style:"min-width:64px"}, "－");
 
-    const btns = UI.el("div",{style:"display:flex;gap:8px;margin-left:auto;flex:0 0 auto;align-items:flex-start"});
-    btns.appendChild(add);
-    btns.appendChild(del);
+    const btnRow = UI.el("div",{class:"row", style:"justify-content:flex-end;margin-top:8px;gap:10px"});
+    btnRow.appendChild(add);
+    btnRow.appendChild(del);
 
-    row.appendChild(ta);
-    row.appendChild(btns);
-    return { row, ta, add, del };
+    wrap.appendChild(ta);
+    wrap.appendChild(btnRow);
+
+    return { row: wrap, ta, add, del };
   }
+
 
   
   function makeTrabajoCompletadoRow(data){
     const wrap = UI.el("div",{style:"margin-bottom:10px"});
 
-    // Parte superior: texto + botones +/-
-    const rowTop = UI.el("div",{class:"form-row-inline", style:"width:100%;align-items:stretch"});
+    // Texto del trabajo (ancho completo) + botones debajo
     const ta = UI.el("textarea",{
       class:"textarea",
       rows:"2",
       placeholder:"Ej: Cambio de correa, engrase…",
-      style:"flex:1"
-    }, (typeof data==="string" ? data : (data?.texto ?? data?.text ?? data?.trabajo ?? "")) || "");
+      style:"width:100%;box-sizing:border-box"
+    }, (typeof data==="string" ? data : (data?.texto ?? data?.text ?? data?.trabajo ?? data?.descripcion ?? "")) || "");
 
-    const btns = UI.el("div",{style:"display:flex;gap:8px"});
-    const add = UI.el("button",{type:"button", class:"btn btnSmall", style:"min-width:44px"}, "＋");
-    const del = UI.el("button",{type:"button", class:"btn btnSmall btnDanger", style:"min-width:44px"}, "－");
-    btns.appendChild(add); btns.appendChild(del);
+    const add = UI.el("button",{type:"button", class:"btn btnSmall", style:"min-width:64px"}, "＋");
+    const del = UI.el("button",{type:"button", class:"btn btnSmall btnDanger", style:"min-width:64px"}, "－");
 
-    rowTop.appendChild(ta);
-    rowTop.appendChild(btns);
-    wrap.appendChild(rowTop);
+    const btnRow = UI.el("div",{class:"row", style:"justify-content:flex-end;margin-top:8px;gap:10px"});
+    btnRow.appendChild(add);
+    btnRow.appendChild(del);
+
+    wrap.appendChild(ta);
+    wrap.appendChild(btnRow);
 
     // Materiales del trabajo
     wrap.appendChild(UI.el("div",{class:"tiny muted", style:"margin:6px 0 4px 2px"},"Materiales de este trabajo"));
