@@ -140,7 +140,9 @@
       if(typeof it==="string") return it;
       if(it && typeof it==="object"){
         const texto = String(it.texto ?? it.text ?? it.trabajo ?? "").trim();
-        const mats = Array.isArray(it.materiales) ? it.materiales.map(m=>String(m?.nombre||"").trim()).filter(Boolean).join(" ") : "";
+        const mats = Array.isArray(it.materiales) ? it.materiales.map(m=>String(m?.nombre||"").trim()).filter(Boolean).join(" ") 
+
+: "";
         return [texto, mats].join(" ").trim();
       }
       return "";
@@ -319,7 +321,9 @@ function filterByPeriod(arr, start, end){
 
   function calcTotals(registros, pagos){
     const totalTrab = registros.reduce((a,r)=>a + (Number(r.horasTrabajadas)||0), 0);
-    const totalExtra = registros.reduce((a,r)=>a + Math.max(0, (Number(r.horasTrabajadas)||0) - (Number(r.horasLegales)||0)), 0);
+    const totalExtra = registros.reduce((a,r)=>a + Math.max(0, (Number(r.horasTrabajadas)||0) - (Number(r.horasLegales)||
+
+0)), 0);
     const totalPagos = pagos.reduce((a,p)=>a + (Number(p.horas)||0), 0);
     const balance = totalExtra - totalPagos;
     return { totalTrab, totalExtra, totalPagos, balance };
@@ -498,7 +502,9 @@ function filterByPeriod(arr, start, end){
     for(const r of filtered){
       const mats = (r.materiales||[]).map(m=>String(m?.nombre||"").trim()).filter(Boolean);
       const cants = (r.materiales||[]).map(m=>String(m?.cantidad||"").trim()).filter(x=>x!=="");
-      const complet = (r.trabajosCompletados||[]).map(formatTrabajoCompletadoItem).map(s=>String(s||"").trim()).filter(Boolean);
+      const complet = (r.trabajosCompletados||[]).map(formatTrabajoCompletadoItem).map(s=>String(s||"").trim()).filter
+
+(Boolean);
       const pend = (r.trabajosPendientes||[]).map(s=>String(s||"").trim()).filter(Boolean);
 
       const td = (txt)=>UI.el("td",{}, safeText(txt));
@@ -528,7 +534,9 @@ function filterByPeriod(arr, start, end){
 
       const tdAct = UI.el("td");
       const rowAct = UI.el("div",{class:"row", style:"flex-wrap:wrap"});
-      rowAct.appendChild(UI.el("button",{type:"button", class:"iconBtn small secondary", onclick:()=>{ S.editId=r.id; App.go("form"); }}, "✏️"));
+      rowAct.appendChild(UI.el("button",{type:"button", class:"iconBtn small secondary", onclick:()=>{ S.editId=r.id; App.go
+
+("form"); }}, "✏️"));
       rowAct.appendChild(UI.el("button",{type:"button", class:"iconBtn small danger", onclick:()=>{
         if(!confirmDanger("¿Borrar este registro?")) return;
         StorageMT.deleteRegistro(r.id);
@@ -552,7 +560,9 @@ function filterByPeriod(arr, start, end){
     const row = UI.el("div",{class:"form-row-inline"});
 
     const name = UI.el("input",{class:"input", placeholder:"Rodamiento…", value: data?.nombre || ""});
-    const qty  = UI.el("input",{class:"input", type:"number", min:"0", step:"1", placeholder:"Cant.", value: data?.cantidad ?? ""});
+    const qty  = UI.el("input",{class:"input", type:"number", min:"0", step:"1", placeholder:"Cant.", value: data?.cantidad ?? 
+
+""});
 
     const nameBox = UI.el("div",{class:"flex-grow"});
     nameBox.appendChild(UI.el("div",{class:"label"},"Material"));
@@ -563,8 +573,18 @@ function filterByPeriod(arr, start, end){
     qtyBox.appendChild(qty);
 
     const btns = UI.el("div",{style:"display:flex;gap:8px;margin-left:auto;flex:0 0 auto;align-items:flex-start"});
-    const add = UI.el("button",{type:"button", class:"btn btnSmall", style:"min-width:44px"}, "＋");
-    const del = UI.el("button",{type:"button", class:"btn btnSmall btnDanger", style:"min-width:44px"}, "－");
+    // NOTA: el tamaño visual de los botones + y - aquí depende de:
+    // 1) class:"btn btnSmall" (CSS)  y 2) style:"min-width:44px" (ancho mínimo)
+    const add = UI.el("button",{
+      type:"button",
+      class:"btn btnSmall",             // <-- AJUSTE TAMAÑO (+): 'btnSmall' controla alto/padding/fuente vía CSS
+      style:"min-width:88px"            // <-- AJUSTE TAMAÑO (+): cambia este 44px para más/menos ancho del botón
+    }, "＋");
+    const del = UI.el("button",{
+      type:"button",
+      class:"btn btnSmall btnDanger",   // <-- AJUSTE TAMAÑO (-): 'btnSmall' controla alto/padding/fuente vía CSS
+      style:"min-width:88px"            // <-- AJUSTE TAMAÑO (-): cambia este 44px para más/menos ancho del botón
+    }, "－");
 
     btns.appendChild(add);
     btns.appendChild(del);
@@ -576,51 +596,49 @@ function filterByPeriod(arr, start, end){
     return { row, name, qty, add, del };
   }
 
+  
   function makeTrabajoRow(kind, data){
-    const wrap = UI.el("div",{style:"width:100%"});
-
+    const row = UI.el("div",{class:"form-row-inline", style:"width:100%;align-items:stretch"});
     const ta = UI.el("textarea",{
       class:"textarea",
       rows:"2",
       placeholder: kind==="pend" ? "Ej: Revisar poleas, revisar motor…" : "Ej: Cambio de correa, engrase…",
-      style:"width:100%;box-sizing:border-box"
+      style:"flex:1;min-width:0"
     }, String(data||""));
 
-    const add = UI.el("button",{type:"button", class:"btn btnSmall", style:"min-width:64px"}, "＋");
-    const del = UI.el("button",{type:"button", class:"btn btnSmall btnDanger", style:"min-width:64px"}, "－");
+    const add = UI.el("button",{type:"button", class:"btn btnSmall", style:"min-width:44px"}, "＋");
+    const del = UI.el("button",{type:"button", class:"btn btnSmall btnDanger", style:"min-width:44px"}, "－");
 
-    const btnRow = UI.el("div",{class:"row", style:"justify-content:flex-end;margin-top:8px;gap:10px"});
-    btnRow.appendChild(add);
-    btnRow.appendChild(del);
+    const btns = UI.el("div",{style:"display:flex;gap:8px;margin-left:auto;flex:0 0 auto;align-items:flex-start"});
+    btns.appendChild(add);
+    btns.appendChild(del);
 
-    wrap.appendChild(ta);
-    wrap.appendChild(btnRow);
-
-    return { row: wrap, ta, add, del };
+    row.appendChild(ta);
+    row.appendChild(btns);
+    return { row, ta, add, del };
   }
-
 
   
   function makeTrabajoCompletadoRow(data){
     const wrap = UI.el("div",{style:"margin-bottom:10px"});
 
-    // Texto del trabajo (ancho completo) + botones debajo
+    // Parte superior: texto + botones +/-
+    const rowTop = UI.el("div",{class:"form-row-inline", style:"width:100%;align-items:stretch"});
     const ta = UI.el("textarea",{
       class:"textarea",
       rows:"2",
       placeholder:"Ej: Cambio de correa, engrase…",
-      style:"width:100%;box-sizing:border-box"
-    }, (typeof data==="string" ? data : (data?.texto ?? data?.text ?? data?.trabajo ?? data?.descripcion ?? "")) || "");
+      style:"flex:1"
+    }, (typeof data==="string" ? data : (data?.texto ?? data?.text ?? data?.trabajo ?? "")) || "");
 
-    const add = UI.el("button",{type:"button", class:"btn btnSmall", style:"min-width:64px"}, "＋");
-    const del = UI.el("button",{type:"button", class:"btn btnSmall btnDanger", style:"min-width:64px"}, "－");
+    const btns = UI.el("div",{style:"display:flex;gap:8px"});
+    const add = UI.el("button",{type:"button", class:"btn btnSmall", style:"min-width:44px"}, "＋");
+    const del = UI.el("button",{type:"button", class:"btn btnSmall btnDanger", style:"min-width:44px"}, "－");
+    btns.appendChild(add); btns.appendChild(del);
 
-    const btnRow = UI.el("div",{class:"row", style:"justify-content:flex-end;margin-top:8px;gap:10px"});
-    btnRow.appendChild(add);
-    btnRow.appendChild(del);
-
-    wrap.appendChild(ta);
-    wrap.appendChild(btnRow);
+    rowTop.appendChild(ta);
+    rowTop.appendChild(btns);
+    wrap.appendChild(rowTop);
 
     // Materiales del trabajo
     wrap.appendChild(UI.el("div",{class:"tiny muted", style:"margin:6px 0 4px 2px"},"Materiales de este trabajo"));
@@ -690,15 +708,25 @@ function filterByPeriod(arr, start, end){
     const c = card(isEdit ? "Editar" : "Nuevo registro", isEdit ? `ID: ${S.editId}` : null);
 
     // Inputs
-    const fecha = UI.el("input",{class:"input", type:"date", required:"required", value: current?.fecha || new Date().toISOString().slice(0,10)});
-    const empresa = UI.el("input",{class:"input", type:"text", placeholder:"Ej: Santísimo Cristo", value: current?.empresa || ""});
-    const localidad = UI.el("input",{class:"input", type:"text", placeholder:"Ej: Malagón", required:"required", value: current?.localidad || ""});
-    const ubicacion = UI.el("input",{class:"input", type:"text", placeholder:"Ej: Polígono", required:"required", value: current?.ubicacion || ""});
+    const fecha = UI.el("input",{class:"input", type:"date", required:"required", value: current?.fecha || new Date
+
+().toISOString().slice(0,10)});
+    const empresa = UI.el("input",{class:"input", type:"text", placeholder:"Ej: Santísimo Cristo", value: current?.empresa || 
+
+""});
+    const localidad = UI.el("input",{class:"input", type:"text", placeholder:"Ej: Malagón", required:"required", value: 
+
+current?.localidad || ""});
+    const ubicacion = UI.el("input",{class:"input", type:"text", placeholder:"Ej: Polígono", required:"required", value: 
+
+current?.ubicacion || ""});
 
     const horaIni = UI.el("input",{class:"input", type:"time", required:"required", value: current?.horaInicio || ""});
     const horaFin = UI.el("input",{class:"input", type:"time", required:"required", value: current?.horaFin || ""});
     const descanso = UI.el("input",{class:"input", type:"time", value: current?.descanso || "00:00"});
-    const horasConvenio = UI.el("input",{class:"input", type:"number", step:"0.25", min:"0", value: String((current && current.horasLegales!=null) ? current.horasLegales : 8)});
+    const horasConvenio = UI.el("input",{class:"input", type:"number", step:"0.25", min:"0", value: String((current && 
+
+current.horasLegales!=null) ? current.horasLegales : 8)});
     const totalHoras = UI.el("input",{class:"input readonly", type:"text", readOnly:"readonly", value:""});
     const extraHoras = UI.el("input",{class:"input readonly", type:"text", readOnly:"readonly", value:""});
 
@@ -764,7 +792,9 @@ function filterByPeriod(arr, start, end){
     const initPend = (current?.trabajosPendientes && current.trabajosPendientes.length) ? current.trabajosPendientes : [""];
     for(const t of initPend) addPendRow(t);
 
-    const observ = UI.el("textarea",{class:"textarea", rows:"2", placeholder:"Ruido leve, se recomienda revisar en 1 semana…"}, current?.observaciones || "");
+    const observ = UI.el("textarea",{class:"textarea", rows:"2", placeholder:"Ruido leve, se recomienda revisar en 1 
+
+semana…"}, current?.observaciones || "");
 
     // Layout
     c.appendChild(UI.el("div",{class:"grid cols2"}, [
@@ -902,7 +932,9 @@ const trabajosPendientes = pendRows.map(it=>it.ta.value.trim()).filter(Boolean);
 
     // Add payment form
     const fecha = UI.el("input",{class:"input", type:"date", value:new Date().toISOString().slice(0,10)});
-    const horas = UI.el("input",{class:"input", type:"number", step:"0.25", min:"0", placeholder:"Horas cobradas (ej: 5)", value:""});
+    const horas = UI.el("input",{class:"input", type:"number", step:"0.25", min:"0", placeholder:"Horas cobradas (ej: 5)", 
+
+value:""});
     const nota = UI.el("input",{class:"input", type:"text", placeholder:"Nota (opcional)", value:""});
 
     const grid = UI.el("div",{class:"grid cols3"});
@@ -1024,7 +1056,9 @@ const trabajosPendientes = pendRows.map(it=>it.ta.value.trim()).filter(Boolean);
 
     c.appendChild(row);
     c.appendChild(UI.el("hr",{class:"sep"}));
-    c.appendChild(UI.el("div",{class:"tiny muted"}, "Consejo: guarda un backup semanal. La opción de “Pegar / Restaurar” acepta un JSON de backup o una tabla copiada desde Excel (si vienes de otra app)."));
+    c.appendChild(UI.el("div",{class:"tiny muted"}, "Consejo: guarda un backup semanal. La opción de “Pegar / Restaurar” 
+
+acepta un JSON de backup o una tabla copiada desde Excel (si vienes de otra app)."));
     container.appendChild(c);
   }
 
