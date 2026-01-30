@@ -562,7 +562,7 @@ function filterByPeriod(arr, start, end){
     qtyBox.appendChild(UI.el("div",{class:"label"},"Cant."));
     qtyBox.appendChild(qty);
 
-    const btns = UI.el("div",{style:"display:flex;gap:8px;margin-left:auto;flex:0 0 auto;align-items:flex-start"});
+    const btns = UI.el("div",{style:"display:flex;gap:8px"});
     const add = UI.el("button",{type:"button", class:"btn btnSmall", style:"min-width:44px"}, "＋");
     const del = UI.el("button",{type:"button", class:"btn btnSmall btnDanger", style:"min-width:44px"}, "－");
 
@@ -576,34 +576,23 @@ function filterByPeriod(arr, start, end){
     return { row, name, qty, add, del };
   }
 
-  
   function makeTrabajoRow(kind, data){
-    const row = UI.el("div",{class:"form-row-inline", style:"width:100%;align-items:stretch"});
-    const ta = UI.el("textarea",{
-      class:"textarea",
-      rows:"2",
-      placeholder: kind==="pend" ? "Ej: Revisar poleas, revisar motor…" : "Ej: Cambio de correa, engrase…",
-      style:"flex:1;min-width:0"
-    }, String(data||""));
-
+    const row = UI.el("div",{class:"form-row-inline"});
+    const ta = UI.el("textarea",{class:"textarea", rows:"2", placeholder: kind==="completado" ? "Ej: Cambio de correa, engrase…" : "Ej: Revisar poleas, revisar motor…", style:"flex:1"}, data || "");
+    const btns = UI.el("div",{style:"display:flex;gap:8px"});
     const add = UI.el("button",{type:"button", class:"btn btnSmall", style:"min-width:44px"}, "＋");
     const del = UI.el("button",{type:"button", class:"btn btnSmall btnDanger", style:"min-width:44px"}, "－");
-
-    const btns = UI.el("div",{style:"display:flex;gap:8px;margin-left:auto;flex:0 0 auto;align-items:flex-start"});
-    btns.appendChild(add);
-    btns.appendChild(del);
-
+    btns.appendChild(add); btns.appendChild(del);
     row.appendChild(ta);
     row.appendChild(btns);
     return { row, ta, add, del };
   }
-
   
   function makeTrabajoCompletadoRow(data){
     const wrap = UI.el("div",{style:"margin-bottom:10px"});
 
     // Parte superior: texto + botones +/-
-    const rowTop = UI.el("div",{class:"form-row-inline", style:"width:100%;align-items:stretch"});
+    const rowTop = UI.el("div",{class:"form-row-inline"});
     const ta = UI.el("textarea",{
       class:"textarea",
       rows:"2",
