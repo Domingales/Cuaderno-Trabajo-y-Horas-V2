@@ -68,7 +68,6 @@
     });
   }
 
-  
   async function writeClipboard(text){
     if(navigator.clipboard && typeof navigator.clipboard.writeText==="function"){
       await navigator.clipboard.writeText(text);
@@ -111,8 +110,6 @@
     return Math.max(0, a - b);
   }
 
-  
-
   function formatTrabajoCompletadoItem(it){
     if(typeof it==="string") return String(it||"").trim();
     if(it && typeof it==="object"){
@@ -146,7 +143,8 @@
       return "";
     }).join(" ");
   }
-function filterByPeriod(arr, start, end){
+
+  function filterByPeriod(arr, start, end){
     const s = String(start||"").trim();
     const e = String(end||"").trim();
     return (arr||[]).filter(r=>{
@@ -274,7 +272,7 @@ function filterByPeriod(arr, start, end){
     }, 200);
   }
 
-// -------- UI builders
+  // -------- UI builders
   function card(title, subtitle=null){
     const c = UI.el("section",{class:"card"});
     const h = UI.el("div",{class:"row", style:"justify-content:space-between;align-items:flex-start"});
@@ -372,7 +370,6 @@ function filterByPeriod(arr, start, end){
     container.appendChild(top);
 
     // Table
-    
     const tCard = card("Registros guardados", `${registros.length} registros`);
 
     // --- Periodo (listados / exportación)
@@ -576,7 +573,6 @@ function filterByPeriod(arr, start, end){
     return { row, name, qty, add, del };
   }
 
-  
   function makeTrabajoRow(kind, data){
     const row = UI.el("div",{class:"form-row-inline", style:"width:100%;align-items:stretch"});
     const ta = UI.el("textarea",{
@@ -598,7 +594,6 @@ function filterByPeriod(arr, start, end){
     return { row, ta, add, del };
   }
 
-  
   function makeTrabajoCompletadoRow(data){
     const wrap = UI.el("div",{style:"margin-bottom:10px"});
 
@@ -673,8 +668,6 @@ function filterByPeriod(arr, start, end){
     return { row: wrap, ta, add, del, getMateriales, clear };
   }
 
-
-
   function renderForm(container){
     const isEdit = !!S.editId;
     UI.setPage(isEdit ? "Editar registro" : "Nuevo registro", "Completa los datos y guarda", {
@@ -743,11 +736,10 @@ function filterByPeriod(arr, start, end){
     for(const t of initComp) addCompRow(t);
 
     // Trabajos pendientes dynamic
-
     const pendHost = UI.el("div",{});
     const pendRows=[];
     function addPendRow(text, focus=false){
-      const it = makeTrabajoRow("pendiente", text);
+      const it = makeTrabajoRow("pend", text); // <-- FIX: usar "pend" para placeholder correcto
       pendRows.push(it);
       pendHost.appendChild(it.row);
       it.add.onclick=()=>addPendRow("", true);
@@ -785,7 +777,7 @@ function filterByPeriod(arr, start, end){
     times.appendChild(box("Horas convenio", horasConvenio));
     times.appendChild(box("Horas trabajadas", totalHoras));
     times.appendChild(box("Horas extra", extraHoras));
-c.appendChild(times);
+    c.appendChild(times);
 
     c.appendChild(UI.el("div",{class:"sep"}));
 
@@ -810,8 +802,7 @@ c.appendChild(times);
       // reset
       empresa.value=""; localidad.value=""; ubicacion.value="";
       horaIni.value=""; horaFin.value=""; descanso.value="00:00";
-      for(const it of matRows){ it.name.value=""; it.qty.value=""; }
-      for(const it of compRows){ it.ta.value=""; }
+      for(const it of compRows){ it.clear(); }          // <-- FIX: limpiar cada trabajo + sus materiales
       for(const it of pendRows){ it.ta.value=""; }
       observ.value="";
       recalc();
@@ -833,6 +824,7 @@ c.appendChild(times);
       let legal = (horasConvenio && horasConvenio.value !== "") ? Number(horasConvenio.value) : 8;
       if(!Number.isFinite(legal) || legal < 0) legal = 0;
       const horasExtra = Math.max(0, horasTrab - legal);
+
       const trabajosCompletados = compRows
         .map(it=>{
           const texto = it.ta.value.trim();
@@ -847,7 +839,8 @@ c.appendChild(times);
         .flatMap(t=>Array.isArray(t.materiales) ? t.materiales : [])
         .map(m=>({ nombre: String(m?.nombre||"").trim(), cantidad: (m?.cantidad==null ? "" : String(m.cantidad)).trim() }))
         .filter(m=>m.nombre || String(m.cantidad||"").trim()!=="");
-const trabajosPendientes = pendRows.map(it=>it.ta.value.trim()).filter(Boolean);
+
+      const trabajosPendientes = pendRows.map(it=>it.ta.value.trim()).filter(Boolean);
 
       const obj = {
         fecha: fecha.value,
@@ -1077,4 +1070,4 @@ const trabajosPendientes = pendRows.map(it=>it.ta.value.trim()).filter(Boolean);
     initNav();
     render();
   });
-})(); 
+})();
